@@ -1,0 +1,137 @@
+{
+  "server": "freshdesk",
+  "tools": [
+    {
+      "name": "search_tickets",
+      "description": "Find tickets that match a condition. Returns 30 per page, up to 10 pages.\n\nYou can filter on: status (2 open, 3 pending, 4 resolved, 5 closed), priority (1 low to 4 urgent),\ntag, type, agent_id, group_id, created_at, updated_at and due_by.\nJoin conditions with AND or OR, use brackets to group them, and use :> or :< for \"more than\" or\n\"less than\". Put words and dates in single quotes.\nExamples: status:2 AND priority:>2   or   tag:'refund' AND created_at:>'2026-09-01'\n",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "title": "Query",
+            "type": "string"
+          },
+          "page": {
+            "default": 1,
+            "title": "Page",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "title": "search_ticketsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_tickets",
+      "description": "Browse tickets, most recently updated first.\n\nFreshdesk only shows tickets from the last 30 days unless you give updated_since\n(a date like 2026-01-01T00:00:00Z). Optional filter: new_and_my_open, watching, spam or deleted.\nTo filter by status, priority or tag, use search_tickets instead.\nYou can ask for up to 100 tickets per page.\n",
+      "inputSchema": {
+        "properties": {
+          "filter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Filter"
+          },
+          "requester_email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Requester Email"
+          },
+          "updated_since": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Updated Since"
+          },
+          "order_by": {
+            "default": "updated_at",
+            "title": "Order By",
+            "type": "string"
+          },
+          "descending": {
+            "default": true,
+            "title": "Descending",
+            "type": "boolean"
+          },
+          "page": {
+            "default": 1,
+            "title": "Page",
+            "type": "integer"
+          },
+          "per_page": {
+            "default": 30,
+            "title": "Per Page",
+            "type": "integer"
+          }
+        },
+        "title": "list_ticketsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_ticket",
+      "description": "Read one ticket: its description, who asked, and how fast it was answered.\n\nSet include_conversations to true to also get the first 10 replies. That costs Freshdesk\na little more of your hourly allowance. For the whole thread use list_ticket_conversations.\nAny Razorpay ids mentioned (like pay_29QQoUBi66xm2f) are listed in razorpay_ids.\n",
+      "inputSchema": {
+        "properties": {
+          "ticket_id": {
+            "title": "Ticket Id",
+            "type": "integer"
+          },
+          "include_conversations": {
+            "default": false,
+            "title": "Include Conversations",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ticket_id"
+        ],
+        "title": "get_ticketArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "list_ticket_conversations",
+      "description": "Read the replies and notes on a ticket, 30 per page.\n\nprivate=true means it is an internal note that the customer never saw.\n",
+      "inputSchema": {
+        "properties": {
+          "ticket_id": {
+            "title": "Ticket Id",
+            "type": "integer"
+          },
+          "page": {
+            "default": 1,
+            "title": "Page",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "ticket_id"
+        ],
+        "title": "list_ticket_conversationsArguments",
+        "type": "object"
+      }
+    }
+  ]
+}
